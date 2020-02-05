@@ -29,10 +29,12 @@ class App:
                                          label='Change Constant Coefficients ' + char))
             self.sliders[i].grid(row=i // 2, column=i % 2, sticky=tk.W)
             self.sliders[i].set(random.randrange(-10, 11))
+        self.set_up_text_field([slider.get() for slider in self.sliders])
 
     def slider_update(self, val):
         values = [slider.get() for slider in self.sliders]
         self.plotter.set_system(values)
+        self.set_up_text_field(values)
         self.plotter.plot_direction_field()
         self.canvas.draw()
         self.plotter.clear_figure()
@@ -43,6 +45,23 @@ class App:
             self.plotter.plot_direction_field()
             self.canvas.draw()
             self.plotter.clear_figure()
+
+    def set_up_text_field(self, values):
+        if values[1] >= 0:
+            sign1 = "+"
+        else:
+            sign1 = "-"
+        if values[3] >= 0:
+            sign2 = "+"
+        else:
+            sign2 = "-"
+        x1_text = tk.Label(self.control_frame, font="Verdana 13 bold",
+                           text="x1' = {0}x1 {1} {2}x2".format(values[0], sign1, abs(values[1])))
+
+        x1_text.grid(row=0, column=2)
+        x2_text = tk.Label(self.control_frame, font="Verdana 13 bold",
+                           text="x2' = {0}x1 {1} {2}x2".format(values[2], sign2, abs(values[3])))
+        x2_text.grid(row=1, column=2)
 
     def quit(self):
         self.root.quit()
