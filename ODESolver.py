@@ -1,10 +1,10 @@
 from functools import reduce
-
 import numpy as np
 import scipy.linalg
 import math
 from fractions import Fraction
 from Constants import *
+from SolutionModel import SolutionModel
 
 
 
@@ -28,12 +28,15 @@ def get_k(v):
 
 
 class ODESolver:
-    def __init__(self, matrix):
-        self.matrix = matrix
+    def __init__(self):
+        self.system = self.eigenvalues = self.eigenvectors = None
+
+    def set_matrix(self, values):
+        self.system = np.array(values).reshape(2, 2)
         self.eigenvalues = self.eigenvectors = None
 
     def solve_eigen(self):
-        self.eigenvalues, self.eigenvectors = scipy.linalg.eig(self.matrix)
+        self.eigenvalues, self.eigenvectors = scipy.linalg.eig(self.system)
         self.eigenvectors = self.eigenvectors.T
         for i in range(len(self.eigenvectors)):
             smallest_mult = get_k([val.real for val in self.eigenvectors[i]])
@@ -41,26 +44,27 @@ class ODESolver:
 
     def classify_equilibrium(self):
         pass
-#
-# import tkinter as tk
-# class SampleApp(tk.Tk):
-#     def __init__(self):
-#         tk.Tk.__init__(self)
-#         l = tk.Text(self, width=5, height=2, borderwidth=0,
-#                     background=self.cget("background"))
-#         l.tag_configure("subscript", offset=-4)
-#         l.insert("insert", "H", "", "2", "subscript", "O")
-#         l.configure(state="disabled")
-#         l.pack(side="top")
-#
+
+    def solve_ODE(self):
+        if self.system is None:
+            return
+        self.solve_eigen()
+        if round(self.eigenvalues[0].imag, 2) == 0:
+            if round(self.eigenvalues[0].real, 2) != round(self.eigenvalues[1].real, 2):
+                model = SolutionModel(self.eigenvalues, self.eigenvectors, DISTINCT_REAL_EIGENVALUES, LINEARLY_INDEPENDENT)
+                return model.get_solution()
+        else:
+            model = SolutionModel(self.eigenvalues, self.eigenvectors, COMPLEX_CONJUGATE_EIGENVALUES, LINEARLY_INDEPENDENT)
+            return model.get_solution()
 
 
 if __name__ == "__main__":
-    # m = np.array([[-0.5, 1], [-1, -0.5]])
-    m = np.array([[-0.5, 1], [-1, -0.5]])
+    m = np.array([[-2, 6], [-3, 4]])
+    # m = np.array([[2, -5], [1, -2]])
+    # m = np.array([[2, 0], [0, -3]])
     solver = ODESolver(m)
-    solver.solve_eigen()
-    print(solver.eigenvalues)
     print(solver.eigenvectors)
-    print("\n")
-    print(solver.eigenvalues[0].imag)
+    solver.solve_ODE()
+    # print(solver.eigenvectors[0].imag)
+    # print("\n")
+    # print(round(solver.eigenvalues[0].real, 2))

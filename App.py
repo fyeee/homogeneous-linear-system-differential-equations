@@ -2,6 +2,7 @@ import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from ODEPlotter import ODEPlotter
+from ODESolver import ODESolver
 import random
 
 
@@ -16,6 +17,7 @@ class App:
 
         self.fig = Figure()
         self.plotter = ODEPlotter(self.fig)
+        self.solver = ODESolver()
         self.sliders = []
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.plot_frame)
         self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
@@ -29,10 +31,12 @@ class App:
                                          label='Change Constant Coefficients ' + char))
             self.sliders[i].grid(row=i // 2, column=i % 2, sticky=tk.W)
             self.sliders[i].set(random.randrange(-10, 11))
-        self.set_up_text_field([slider.get() for slider in self.sliders])
+        values = [slider.get() for slider in self.sliders]
+        self.set_up_text_field(values)
 
     def slider_update(self, val):
         values = [slider.get() for slider in self.sliders]
+        self.solver.set_matrix(values)
         self.plotter.set_system(values)
         self.set_up_text_field(values)
         self.plotter.plot_direction_field()
@@ -62,6 +66,12 @@ class App:
         x2_text = tk.Label(self.control_frame, font="Verdana 13 bold",
                            text="x2' = {0}x1 {1} {2}x2".format(values[2], sign2, abs(values[3])))
         x2_text.grid(row=1, column=2)
+        solutions = self.solver.solve_ODE()
+        if solutions is not None:
+            solution_x1 = tk.Label(self.control_frame, font="Verdana 13 bold", text=solutions[0])
+            solution_x1.grid(row=2, column=0)
+            solution_x1 = tk.Label(self.control_frame, font="Verdana 13 bold", text=solutions[1])
+            solution_x1.grid(row=3, column=0)
 
     def quit(self):
         self.root.quit()
