@@ -8,21 +8,30 @@ import random
 
 class App:
     def __init__(self):
+        # create different sections of the app
         self.root = tk.Tk()
+        self.root.geometry("800x1000")
         self.control_frame = tk.Frame(self.root)
         self.plot_frame = tk.Frame(self.root)
+        self.solution_frame = tk.Frame(self.root)
         self.root.wm_title("Ordinary Differential Equations")
         self.control_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.solution_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.plot_frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
+        # plot frame initialize
         self.fig = Figure()
         self.plotter = ODEPlotter(self.fig)
-        self.solver = ODESolver()
+        # control frame initialize
         self.sliders = []
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.plot_frame)
         self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.canvas.callbacks.connect('button_press_event', self.on_click_figure)
         self.set_up_control_frame()
+        # solution frame initialize
+        self.solver = ODESolver()
+        self.solutions = [tk.StringVar(), tk.StringVar()]
+        self.set_up_solution_frame()
 
     def set_up_control_frame(self):
         for i, char in enumerate(['a', 'b', 'c', 'd']):
@@ -42,6 +51,7 @@ class App:
         self.plotter.plot_direction_field()
         self.canvas.draw()
         self.plotter.clear_figure()
+        self.solution_update()
 
     def on_click_figure(self, event):
         if event.xdata and event.ydata:
@@ -66,12 +76,21 @@ class App:
         x2_text = tk.Label(self.control_frame, font="Verdana 13 bold",
                            text="x2' = {0}x1 {1} {2}x2".format(values[2], sign2, abs(values[3])))
         x2_text.grid(row=1, column=2)
+
+    def solution_update(self):
         solutions = self.solver.solve_ODE()
         if solutions is not None:
-            solution_x1 = tk.Label(self.control_frame, font="Verdana 13 bold", text=solutions[0])
-            solution_x1.grid(row=2, column=0)
-            solution_x1 = tk.Label(self.control_frame, font="Verdana 13 bold", text=solutions[1])
-            solution_x1.grid(row=3, column=0)
+            for i in range(len(solutions)):
+                self.solutions[0].set(solutions[0])
+                self.solutions[1].set(solutions[1])
+
+    def set_up_solution_frame(self):
+        text = tk.Label(self.solution_frame, font="Verdana 15 bold", text="Numerical Solution")
+        text.pack()
+        solution_x1 = tk.Label(self.solution_frame, font="Verdana 12 bold", textvariable=self.solutions[0])
+        solution_x1.pack()
+        solution_x1 = tk.Label(self.solution_frame, font="Verdana 12 bold", textvariable=self.solutions[1])
+        solution_x1.pack()
 
     def quit(self):
         self.root.quit()

@@ -51,10 +51,12 @@ class ODESolver:
         self.solve_eigen()
         if round(self.eigenvalues[0].imag, 2) == 0:
             if round(self.eigenvalues[0].real, 2) != round(self.eigenvalues[1].real, 2):
-                model = SolutionModel(self.eigenvalues, self.eigenvectors, DISTINCT_REAL_EIGENVALUES, LINEARLY_INDEPENDENT)
+                model = SolutionModel(self.eigenvalues, self.eigenvectors, DISTINCT_REAL_EIGENVALUES,
+                                      LINEARLY_INDEPENDENT)
                 return model.get_solution()
         else:
-            model = SolutionModel(self.eigenvalues, self.eigenvectors, COMPLEX_CONJUGATE_EIGENVALUES, LINEARLY_INDEPENDENT)
+            model = SolutionModel(self.eigenvalues, self.eigenvectors, COMPLEX_CONJUGATE_EIGENVALUES,
+                                  LINEARLY_INDEPENDENT)
             return model.get_solution()
 
 
@@ -65,6 +67,3 @@ if __name__ == "__main__":
     solver = ODESolver(m)
     print(solver.eigenvectors)
     solver.solve_ODE()
-    # print(solver.eigenvectors[0].imag)
-    # print("\n")
-    # print(round(solver.eigenvalues[0].real, 2))

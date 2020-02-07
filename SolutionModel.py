@@ -43,17 +43,19 @@ class SolutionModel:
     def get_solution(self):
         if self.type == DISTINCT_REAL_EIGENVALUES:
             sign = "+" if self.k2[0] >= 0 else ''
-            solution_x1 = str(round(self.k1[0], 2)) + "C" + unicode_subscript_dict['1'] + "e" + get_unicode_superscript(
-                str(self.r1) + 't') + sign + str(round(self.k2[0], 2)) + "C" + unicode_subscript_dict[
+            solution_x1 = "X1=" + str(round(self.k1[0], 2)) + "C" + unicode_subscript_dict['1'] + "e" + \
+                          get_unicode_superscript(str(self.r1) + 't') + sign + str(round(self.k2[0], 2)) + "C" + \
+                          unicode_subscript_dict[
                               '2'] + "e" + get_unicode_superscript(str(self.r2) + 't')
             sign = "+" if self.k2[1] >= 0 else ''
-            solution_x2 = str(round(self.k1[1], 2)) + "C" + unicode_subscript_dict['1'] + "e" + get_unicode_superscript(
+            solution_x2 = "X2=" + str(round(self.k1[1], 2)) + "C" + unicode_subscript_dict[
+                '1'] + "e" + get_unicode_superscript(
                 str(self.r1) + 't') + sign + str(round(self.k2[1], 2)) + "C" + unicode_subscript_dict[
                               '2'] + "e" + get_unicode_superscript(str(self.r2) + 't')
         elif self.type == COMPLEX_CONJUGATE_EIGENVALUES:
             sign1 = "-" if self.k2[0] >= 0 else "+"
             sign2 = "+" if self.k2[0] >= 0 else "-"
-            solution_x1 = "C" + unicode_subscript_dict['1'] + "e" + get_unicode_superscript(str(self.r1) + 't') + \
+            solution_x1 = "X1=C" + unicode_subscript_dict['1'] + "e" + get_unicode_superscript(str(self.r1) + 't') + \
                           "(" + str(round(self.k1[0], 2)) + "cos(" + str(self.mu) + "t)" + sign1 + \
                           str(abs(round(self.k2[0], 2))) + "sin(" + str(self.mu) + "t))+C" + \
                           unicode_subscript_dict['2'] + "e" + get_unicode_superscript(str(self.r2) + 't') + "(" + \
@@ -61,7 +63,7 @@ class SolutionModel:
                           str(abs(round(self.k2[0], 2))) + "cos(" + str(self.mu) + "t))"
             sign1 = "-" if self.k2[1] >= 0 else "+"
             sign2 = "+" if self.k2[1] >= 0 else "-"
-            solution_x2 = "C" + unicode_subscript_dict['1'] + "e" + get_unicode_superscript(str(self.r1) + 't') \
+            solution_x2 = "X2=C" + unicode_subscript_dict['1'] + "e" + get_unicode_superscript(str(self.r1) + 't') \
                           + "(" + str(round(self.k1[1], 2)) + "cos(" + str(self.mu) + "t)" + sign1 + \
                           str(abs(round(self.k2[1], 2))) + "sin(" + str(self.mu) + "t))+C" + \
                           unicode_subscript_dict['2'] + "e" + get_unicode_superscript(str(self.r2) + 't') + "(" + \
