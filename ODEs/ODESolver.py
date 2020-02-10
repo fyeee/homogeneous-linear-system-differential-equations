@@ -4,7 +4,7 @@ import scipy.linalg
 import math
 from fractions import Fraction
 from Constants import *
-from SolutionModel import SolutionModel
+from ODEs.SolutionModel import SolutionModel
 
 
 
@@ -61,9 +61,10 @@ class ODESolver:
 
 
 if __name__ == "__main__":
-    m = np.array([[-2, 6], [-3, 4]])
+    m = np.array([[5, -7], [5, 9]])
     # m = np.array([[2, -5], [1, -2]])
     # m = np.array([[2, 0], [0, -3]])
-    solver = ODESolver(m)
-    print(solver.eigenvectors)
+    solver = ODESolver()
+    solver.set_matrix(m)
+    # print(solver.eigenvectors)
     solver.solve_ODE()

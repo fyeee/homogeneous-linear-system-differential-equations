@@ -1,4 +1,4 @@
-# ODEs2D
+# Homogeneous Linear System of Differential Equations Plotter and Solver
 Solving and plotting first order linear homogeneous system of differential equations with constant coefficients
 ## Requirement
 * python 3.6
