@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.integrate import odeint
-from Constants import *
+from UI.Constants import *
 
 
 class ODEPlotter:

@@ -3,9 +3,8 @@ import numpy as np
 import scipy.linalg
 import math
 from fractions import Fraction
-from Constants import *
+from UI.Constants import *
 from ODEs.SolutionModel import SolutionModel
-
 
 
 # least common multiple
@@ -42,6 +41,11 @@ class ODESolver:
             smallest_mult = get_k([val.real for val in self.eigenvectors[i]])
             self.eigenvectors[i] = self.eigenvectors[i] * smallest_mult
 
+    def solve_second_eigen_vec(self):
+        A = self.system - round(self.eigenvalues[0].real, 2) * np.identity(self.system.shape[0])
+        b = np.array([round(self.eigenvectors[0][0], 2), round(self.eigenvectors[0][1], 2)])
+        return scipy.linalg.pinv(A).dot(b)
+
     def classify_equilibrium(self):
         pass
 
@@ -50,21 +54,27 @@ class ODESolver:
             return
         self.solve_eigen()
         if round(self.eigenvalues[0].imag, 2) == 0:
-            if round(self.eigenvalues[0].real, 2) != round(self.eigenvalues[1].real, 2):
+            A = np.row_stack([self.eigenvectors[0], self.eigenvectors[1]])
+            U, s, V = np.linalg.svd(A)
+            if np.sum(np.abs(s) > TOLERANCE) == 2:
                 model = SolutionModel(self.eigenvalues, self.eigenvectors, DISTINCT_REAL_EIGENVALUES,
                                       LINEARLY_INDEPENDENT)
-                return model.get_solution()
+            else:
+                if round(self.eigenvectors[0][0], 2) == round(self.eigenvectors[1][0], 2) and \
+                        round(self.eigenvectors[0][1], 2) == round(self.eigenvectors[1][1], 2):
+                    model = SolutionModel(self.eigenvalues, self.eigenvectors, REPEATED_REAL_EIGENVALUES,
+                                          LINEARLY_INDEPENDENT)
+                else:
+                    model = SolutionModel(self.eigenvalues, self.eigenvectors, REPEATED_REAL_EIGENVALUES,
+                                          LINEARLY_DEPENDENT, n=self.solve_second_eigen_vec())
         else:
             model = SolutionModel(self.eigenvalues, self.eigenvectors, COMPLEX_CONJUGATE_EIGENVALUES,
                                   LINEARLY_INDEPENDENT)
-            return model.get_solution()
-
+        return model.get_solution()
 
 if __name__ == "__main__":
-    m = np.array([[5, -7], [5, 9]])
-    # m = np.array([[2, -5], [1, -2]])
-    # m = np.array([[2, 0], [0, -3]])
+    m = np.array([[12, 4], [-16, -4]])
     solver = ODESolver()
     solver.set_matrix(m)
     # print(solver.eigenvectors)
-    solver.solve_ODE()
+    print(solver.solve_ODE())
